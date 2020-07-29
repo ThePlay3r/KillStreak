@@ -1,0 +1,90 @@
+mysql:
+  host: ""
+  database: ""
+  port: "3306"
+  username: ""
+  password: ""
+
+options:
+  leaderboard: 15 # Minimum of 3
+  autoupdate: 3600 # Seconds
+  bungee: false # bungee broadcasting
+
+menu:
+  top1:
+    name: "top1 %name"
+    lore:
+      - "%kills"
+  top2:
+    name: "top2 %name"
+    lore:
+      - "%kills"
+  top3:
+    name: "top3 %name"
+    lore:
+      - "%kills"
+  leaderboard:
+    type: "STONE"
+    name: "others"
+    amount: 1
+    lore: {} # will be replaced
+  update:
+    type: "REDSTONE"
+    name: "update"
+    amount: 1
+    lore:
+      - "lore"
+lang:
+  MENU_TITLE: "Title"
+  NO_PERM: "Nemáš dostatečné pravomoce!"
+  LEADERBOARD_FORMAT: "%pos %name %kills"
+  NO_CONSOLE: "příkaz je jen pro hráče"
+
+killstreaks:
+  example:
+    start: 0
+    end: 4
+    broadcast: false
+    broadcast-message: {}
+    title:
+      title: "KillStreak"
+      subtitle: "Tvuj KillStreak je nyní %killstreak!"
+      in: 20
+      stay: 40
+      out: 20
+    sound:
+      type: "BLOCK_ANVIL_BREAK"
+      volume: 1
+      pitch: 1
+  special-example:
+    start: 5
+    end: 5
+    broadcast: true
+    broadcast-message:
+      - "%killer zabil %victim!"
+      - "ziskal tím killstreak %killstreak!"
+    title:
+      title: "§eKillStreak"
+      subtitle: "§bZabil jsi %victim a ziskal tim killstreak §d5§b! Let's go!"
+      in: 20
+      stay: 50
+      out: 20
+    sound:
+      type: "BLOCK_ANVIL_BREAK"
+      volume: 1
+      pitch: 1
+  infinity-example:
+    start: 6
+    end: 9999
+    broadcast: false
+    broadcast-message: {}
+    title:
+      title: "KillStreak"
+      subtitle: "Tvuj KillStreak je nyní %killstreak!"
+      in: 20
+      stay: 40
+      out: 20
+    sound:
+      type: "BLOCK_ANVIL_BREAK"
+      volume: 1
+      pitch: 1
