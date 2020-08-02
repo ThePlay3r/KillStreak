@@ -3,8 +3,8 @@ package me.pljr.killstreak.menus;
 import me.pljr.killstreak.config.CfgLang;
 import me.pljr.killstreak.config.CfgMenu;
 import me.pljr.killstreak.enums.Lang;
-import me.pljr.killstreak.utils.GuiUtil;
 import me.pljr.killstreak.utils.KillStreakUtil;
+import me.pljr.pljrapi.managers.GuiManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,9 +23,9 @@ public class KillStreakMenu implements Listener {
     public static Inventory getMenu(Player player){
         Inventory inventory = Bukkit.createInventory(player, 3*9, CfgLang.lang.get(Lang.MENU_TITLE));
 
-        ItemStack top1 = GuiUtil.createHead("Steve", "");
-        ItemStack top2  = GuiUtil.createHead("Steve", "");
-        ItemStack top3  = GuiUtil.createHead("Steve", "");
+        ItemStack top1 = GuiManager.createHead("Steve", "");
+        ItemStack top2  = GuiManager.createHead("Steve", "");
+        ItemStack top3  = GuiManager.createHead("Steve", "");
         List<String> othersList = new ArrayList<>();
 
         int loop = 0;
@@ -39,7 +39,7 @@ public class KillStreakMenu implements Listener {
                     for (String line : CfgMenu.top1Lore){
                         lore1.add(line.replace("%name", name).replace("%kills", kills+""));
                     }
-                    top1 = GuiUtil.createHead(name,
+                    top1 = GuiManager.createHead(name,
                             CfgMenu.top1Name.replace("%name", name).replace("%kills", kills+""), lore1);
                     continue;
                 case 2:
@@ -47,7 +47,7 @@ public class KillStreakMenu implements Listener {
                     for (String line : CfgMenu.top2Lore){
                         lore2.add(line.replace("%name", name).replace("%kills", kills+""));
                     }
-                    top2 = GuiUtil.createHead(name,
+                    top2 = GuiManager.createHead(name,
                             CfgMenu.top2Name.replace("%name", name).replace("%kills", kills+""), lore2);
                     continue;
                 case 3:
@@ -55,7 +55,7 @@ public class KillStreakMenu implements Listener {
                     for (String line : CfgMenu.top3Lore){
                         lore3.add(line.replace("%name", name).replace("%kills", kills+""));
                     }
-                    top3 = GuiUtil.createHead(name,
+                    top3 = GuiManager.createHead(name,
                             CfgMenu.top3Name.replace("%name", name).replace("%kills", kills+""), lore3);
                     continue;
             }
@@ -80,6 +80,7 @@ public class KillStreakMenu implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event){
         if (event.getView().getTitle().equals(CfgLang.lang.get(Lang.MENU_TITLE))){
+            event.setCancelled(true);
             if (event.getWhoClicked() instanceof Player){
                 Player player = (Player) event.getWhoClicked();
                 int slot = event.getSlot();

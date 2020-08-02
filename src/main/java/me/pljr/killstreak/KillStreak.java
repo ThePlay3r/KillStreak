@@ -2,14 +2,16 @@ package me.pljr.killstreak;
 
 import me.pljr.killstreak.commands.KillStreakCommand;
 import me.pljr.killstreak.config.*;
-import me.pljr.killstreak.database.QueryManager;
+import me.pljr.killstreak.managers.QueryManager;
 import me.pljr.killstreak.listeners.AsyncPlayerPreLoginListener;
 import me.pljr.killstreak.menus.KillStreakMenu;
 import me.pljr.killstreak.utils.KillStreakUtil;
-import me.pljr.marriage.database.DataSource;
 import me.pljr.killstreak.listeners.PlayerDeathListener;
 import me.pljr.killstreak.listeners.PlayerQuitListener;
-import me.pljr.killstreak.managers.ConfigManager;
+import me.pljr.pljrapi.PLJRApi;
+import me.pljr.pljrapi.database.DataSource;
+import me.pljr.pljrapi.managers.ConfigManager;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class KillStreak extends JavaPlugin {
@@ -22,15 +24,23 @@ public final class KillStreak extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+        if (!setupPLJRApi()) return;
         setupConfig();
         setupDatabase();
         loadListeners();
         setupCommands();
-        setupBungee();
     }
 
-    private void setupBungee(){
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+    private boolean setupPLJRApi(){
+        PLJRApi api = (PLJRApi) Bukkit.getServer().getPluginManager().getPlugin("PLJRApi");
+        if (api == null){
+            Bukkit.getConsoleSender().sendMessage("§cKillStreak: PLJRApi not found, disabling plugin!");
+            getServer().getPluginManager().disablePlugin(this);
+            return false;
+        }else{
+            Bukkit.getConsoleSender().sendMessage("§aKillStreak: Hooked into PLJRApi!");
+            return true;
+        }
     }
 
     private void setupCommands(){
@@ -39,18 +49,15 @@ public final class KillStreak extends JavaPlugin {
 
     private void setupConfig(){
         saveDefaultConfig();
-        configManager = new ConfigManager(getConfig());
-        CfgMysql.load();
+        dataSource = PLJRApi.getDataSource();
+        configManager = new ConfigManager(getConfig(), "§cKillStreak:", "config.yml");
         CfgKillStreaks.load();
         CfgMenu.load();
-        CfgOptions.load();
+        CfgSettings.load();
         CfgLang.load();
     }
 
     private void setupDatabase(){
-        dataSource = new DataSource();
-        dataSource.load();
-        dataSource.initPool();
         queryManager = new QueryManager(dataSource);
         queryManager.setupTables();
         KillStreakUtil.autoUpdateLeaderboard();

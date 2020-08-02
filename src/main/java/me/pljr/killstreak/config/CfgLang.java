@@ -2,7 +2,7 @@ package me.pljr.killstreak.config;
 
 import me.pljr.killstreak.KillStreak;
 import me.pljr.killstreak.enums.Lang;
-import me.pljr.killstreak.managers.ConfigManager;
+import me.pljr.pljrapi.managers.ConfigManager;
 
 import java.util.HashMap;
 

@@ -1,11 +1,11 @@
-package me.pljr.killstreak.database;
+package me.pljr.killstreak.managers;
 
 import me.pljr.killstreak.KillStreak;
-import me.pljr.killstreak.config.CfgOptions;
-import me.pljr.killstreak.managers.PlayerManager;
+import me.pljr.killstreak.config.CfgSettings;
+import me.pljr.killstreak.objects.CorePlayer;
 import me.pljr.killstreak.utils.KillStreakUtil;
-import me.pljr.killstreak.utils.PlayerUtil;
-import me.pljr.marriage.database.DataSource;
+import me.pljr.killstreak.managers.PlayerManager;
+import me.pljr.pljrapi.database.DataSource;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;
@@ -25,7 +25,7 @@ public class QueryManager {
         this.dataSource = dataSource;
     }
 
-    public void loadPlayer(String username){
+    /*public void loadPlayer(String username){
         Bukkit.getScheduler().runTaskAsynchronously(killStreak, () ->{
             try {
                 Connection connection = dataSource.getConnection();
@@ -47,7 +47,7 @@ public class QueryManager {
                 e.printStackTrace();
             }
         });
-    }
+    }*/
 
     public void loadPlayerSync(String username){
         try {
@@ -63,8 +63,8 @@ public class QueryManager {
                 killstreak = results.getInt("killstreak");
                 lastkilled = results.getString("lastkilled");
             }
-            PlayerManager playerManager = new PlayerManager(killstreak, lastkilled);
-            PlayerUtil.setPlayerManager(username, playerManager);
+            CorePlayer corePlayer = new CorePlayer(killstreak, lastkilled);
+            PlayerManager.setCorePlayer(username, corePlayer);
             dataSource.close(connection, preparedStatement, results);
         }catch (SQLException e){
             e.printStackTrace();
@@ -74,10 +74,10 @@ public class QueryManager {
     public void savePlayer(String username){
         Bukkit.getScheduler().runTaskAsynchronously(killStreak, () ->{
            try {
-               PlayerManager playerManager = PlayerUtil.getPlayerManager(username);
+               CorePlayer corePlayer = PlayerManager.getCorePlayer(username);
 
-               int killstreak = playerManager.getKillstreak();
-               String lastkilled = playerManager.getLastKilled();
+               int killstreak = corePlayer.getKillstreak();
+               String lastkilled = corePlayer.getLastKilled();
 
                Connection connection = dataSource.getConnection();
                PreparedStatement preparedStatement = connection.prepareStatement(
@@ -116,7 +116,7 @@ public class QueryManager {
                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
                LinkedHashMap<String, Integer> leaderboard = new LinkedHashMap<>();
-               int maxLoop = CfgOptions.leaderboard;
+               int maxLoop = CfgSettings.leaderboard;
                int loop = 1;
                for (Map.Entry<String, Integer> entry : sortedList.entrySet()){
                    if (loop == maxLoop) break;

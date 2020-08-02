@@ -1,27 +1,23 @@
 package me.pljr.killstreak.managers;
 
+import me.pljr.killstreak.KillStreak;
+import me.pljr.killstreak.objects.CorePlayer;
+
+import java.util.HashMap;
+
 public class PlayerManager {
-    private int killstreak;
-    private String lastKilled;
+    private static final HashMap<String, CorePlayer> players = new HashMap<>();
+    private static final QueryManager query = KillStreak.getQueryManager();
 
-    public PlayerManager(int killstreak, String lastKilled){
-        this.killstreak = killstreak;
-        this.lastKilled = lastKilled;
+    public static CorePlayer getCorePlayer(String pName){
+        if (players.containsKey(pName)){
+            return players.get(pName);
+        }
+        query.loadPlayerSync(pName);
+        return getCorePlayer(pName);
     }
 
-    public int getKillstreak() {
-        return killstreak;
-    }
-
-    public void setKillstreak(int killstreak) {
-        this.killstreak = killstreak;
-    }
-
-    public String getLastKilled() {
-        return lastKilled;
-    }
-
-    public void setLastKilled(String lastKilled) {
-        this.lastKilled = lastKilled;
+    public static void setCorePlayer(String pName, CorePlayer corePlayer){
+        players.put(pName, corePlayer);
     }
 }

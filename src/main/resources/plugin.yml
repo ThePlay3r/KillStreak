@@ -4,6 +4,7 @@ main: me.pljr.killstreak.KillStreak
 api-version: 1.16
 authors: [9hx]
 description: Simple plugin for counting kills of players.
+depends: [PLJRApi]
 commands:
   killstreak:
     description: Main command.

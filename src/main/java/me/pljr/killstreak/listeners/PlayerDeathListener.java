@@ -1,7 +1,6 @@
 package me.pljr.killstreak.listeners;
 
 import me.pljr.killstreak.utils.KillStreakUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

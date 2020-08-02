@@ -3,6 +3,7 @@ package me.pljr.killstreak.commands;
 import me.pljr.killstreak.config.CfgLang;
 import me.pljr.killstreak.enums.Lang;
 import me.pljr.killstreak.menus.KillStreakMenu;
+import me.pljr.pljrapi.utils.CommandUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,10 +18,7 @@ public class KillStreakCommand implements CommandExecutor {
             return false;
         }
         Player player = (Player) sender;
-        if (!player.hasPermission("killstreak.use")){
-            player.sendMessage(CfgLang.lang.get(Lang.NO_PERM));
-            return false;
-        }
+        if (!CommandUtil.checkPerm(player, "killstreak.use")) return false;
         player.openInventory(KillStreakMenu.getMenu(player));
         return true;
     }

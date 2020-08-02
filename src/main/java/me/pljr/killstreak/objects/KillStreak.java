@@ -1,16 +1,19 @@
-package me.pljr.killstreak.managers;
+package me.pljr.killstreak.objects;
+
+import me.pljr.pljrapi.objects.PLJRSound;
+import me.pljr.pljrapi.objects.PLJRTitle;
 
 import java.util.List;
 
-public class KillStreakManager {
+public class KillStreak {
     private final int start;
     private final int end;
     private final boolean broadcast;
     private final List<String> broadcastMessage;
-    private final TitleManager title;
-    private final SoundManager sound;
+    private final PLJRTitle title;
+    private final PLJRSound sound;
 
-    public KillStreakManager(int start, int end, boolean broadcast, List<String> broadcastMessage, TitleManager title, SoundManager sound){
+    public KillStreak(int start, int end, boolean broadcast, List<String> broadcastMessage, PLJRTitle title, PLJRSound sound){
         this.start = start;
         this.end = end;
         this.broadcast = broadcast;
@@ -23,11 +26,11 @@ public class KillStreakManager {
         return start;
     }
 
-    public TitleManager getTitle() {
+    public PLJRTitle getTitle() {
         return title;
     }
 
-    public SoundManager getSound() {
+    public PLJRSound getSound() {
         return sound;
     }
 

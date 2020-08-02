@@ -1,7 +1,7 @@
 package me.pljr.killstreak.config;
 
 import me.pljr.killstreak.KillStreak;
-import me.pljr.killstreak.managers.ConfigManager;
+import me.pljr.pljrapi.managers.ConfigManager;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class CfgMenu {
         CfgMenu.top2Lore = config.getStringList("menu.top2.lore");
         CfgMenu.top3Name = config.getString("menu.top3.name");
         CfgMenu.top3Lore = config.getStringList("menu.top3.lore");
-        CfgMenu.update = config.getItemStack("menu.update");
-        CfgMenu.leaderboard = config.getItemStack("menu.leaderboard");
+        CfgMenu.update = config.getSimpleItemStack("menu.update");
+        CfgMenu.leaderboard = config.getSimpleItemStack("menu.leaderboard");
     }
 }
