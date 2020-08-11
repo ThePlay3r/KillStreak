@@ -30,7 +30,7 @@ public class QueryManager {
         try {
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM killstreak_players WHERE username=?"
+                    "SELECT * FROM killstreak_players WHERE uuid=?"
             );
             preparedStatement.setString(1, uuid.toString());
             ResultSet results = preparedStatement.executeQuery();
