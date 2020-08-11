@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class KillStreakUtil {
     private static final QueryManager query = me.pljr.killstreak.KillStreak.getQueryManager();
@@ -32,11 +33,13 @@ public class KillStreakUtil {
     }
 
     public static void kill(Player killer, Player victim){
+        UUID killerId = killer.getUniqueId();
         String killerName = killer.getName();
         Location killerLoc = killer.getLocation();
-        CorePlayer killerManager = PlayerManager.getCorePlayer(killerName);
+        CorePlayer killerManager = PlayerManager.getCorePlayer(killerId);
+        UUID victimId = victim.getUniqueId();
         String victimName = victim.getName();
-        CorePlayer victimManager = PlayerManager.getCorePlayer(victimName);
+        CorePlayer victimManager = PlayerManager.getCorePlayer(victimId);
 
         int killerKillstreak = killerManager.getKillstreak()+1;
         KillStreak killStreak = CfgKillStreaks.killstreaks.get(killerKillstreak);
@@ -68,9 +71,9 @@ public class KillStreakUtil {
 
         victimManager.setKillstreak(0);
 
-        PlayerManager.setCorePlayer(killerName, killerManager);
-        PlayerManager.setCorePlayer(victimName, victimManager);
-        query.savePlayer(killerName);
-        query.savePlayer(victimName);
+        PlayerManager.setCorePlayer(killerId, killerManager);
+        PlayerManager.setCorePlayer(victimId, victimManager);
+        query.savePlayer(killerId);
+        query.savePlayer(victimId);
     }
 }
