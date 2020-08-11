@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class QueryManager {
@@ -25,37 +26,13 @@ public class QueryManager {
         this.dataSource = dataSource;
     }
 
-    /*public void loadPlayer(String username){
-        Bukkit.getScheduler().runTaskAsynchronously(killStreak, () ->{
-            try {
-                Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        "SELECT * FROM killstreak_players WHERE username=?"
-                );
-                preparedStatement.setString(1, username);
-                ResultSet results = preparedStatement.executeQuery();
-                int killstreak = 0;
-                String lastkilled = "";
-                if (results.next()){
-                    killstreak = results.getInt("killstreak");
-                    lastkilled = results.getString("lastkilled");
-                }
-                PlayerManager playerManager = new PlayerManager(killstreak, lastkilled);
-                PlayerUtil.setPlayerManager(username, playerManager);
-                dataSource.close(connection, preparedStatement, results);
-            }catch (SQLException e){
-                e.printStackTrace();
-            }
-        });
-    }*/
-
-    public void loadPlayerSync(String username){
+    public void loadPlayerSync(UUID uuid){
         try {
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM killstreak_players WHERE username=?"
             );
-            preparedStatement.setString(1, username);
+            preparedStatement.setString(1, uuid.toString());
             ResultSet results = preparedStatement.executeQuery();
             int killstreak = 0;
             String lastkilled = "";
@@ -64,17 +41,17 @@ public class QueryManager {
                 lastkilled = results.getString("lastkilled");
             }
             CorePlayer corePlayer = new CorePlayer(killstreak, lastkilled);
-            PlayerManager.setCorePlayer(username, corePlayer);
+            PlayerManager.setCorePlayer(uuid, corePlayer);
             dataSource.close(connection, preparedStatement, results);
         }catch (SQLException e){
             e.printStackTrace();
         }
     }
 
-    public void savePlayer(String username){
+    public void savePlayer(UUID uuid){
         Bukkit.getScheduler().runTaskAsynchronously(killStreak, () ->{
            try {
-               CorePlayer corePlayer = PlayerManager.getCorePlayer(username);
+               CorePlayer corePlayer = PlayerManager.getCorePlayer(uuid);
 
                int killstreak = corePlayer.getKillstreak();
                String lastkilled = corePlayer.getLastKilled();
@@ -83,7 +60,7 @@ public class QueryManager {
                PreparedStatement preparedStatement = connection.prepareStatement(
                        "REPLACE INTO killstreak_players VALUES (?,?,?)"
                );
-               preparedStatement.setString(1, username);
+               preparedStatement.setString(1, uuid.toString());
                preparedStatement.setInt(2, killstreak);
                preparedStatement.setString(3, lastkilled);
                preparedStatement.executeUpdate();
@@ -121,7 +98,11 @@ public class QueryManager {
                for (Map.Entry<String, Integer> entry : sortedList.entrySet()){
                    if (loop == maxLoop) break;
                    loop++;
-                   leaderboard.put(entry.getKey(), entry.getValue());
+                   String name = Bukkit.getOfflinePlayer(UUID.fromString(entry.getKey())).getName();
+                   if (name == null){
+                       name = "?";
+                   }
+                   leaderboard.put(name, entry.getValue());
                }
                KillStreakUtil.leaderboard = leaderboard;
 
@@ -137,7 +118,7 @@ public class QueryManager {
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS killstreak_players (" +
-                            "username varchar(16) NOT NULL PRIMARY KEY," +
+                            "uuid char(36) NOT NULL PRIMARY KEY," +
                             "killstreak int," +
                             "lastkilled varchar(16));"
             );

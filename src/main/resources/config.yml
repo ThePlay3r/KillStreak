@@ -51,7 +51,8 @@ menu:
     type: "SIGN"
     name: "&eOthers"
     amount: 1
-    lore: {} # will be replaced
+    lore:
+      - "§r" # will be replaced
   update:
     type: "REDSTONE"
     name: "&aUpdate"
@@ -79,7 +80,8 @@ killstreaks:
     start: 0
     end: 4
     broadcast: false
-    broadcast-message: {}
+    broadcast-message:
+      - "Noone will ever see this! Haha!"
     title:
       title: "&c&lKillStreak"
       subtitle: "&fYour killstreak is now &e%killstreak&f!"
@@ -112,7 +114,8 @@ killstreaks:
     start: 6
     end: 9999
     broadcast: false
-    broadcast-message: {}
+    broadcast-message:
+      - "Noone will ever see this! Haha!"
     title:
       title: "&c&lKillStreak"
       subtitle: "&fYour killstreak is now &e%killstreak&f!"
