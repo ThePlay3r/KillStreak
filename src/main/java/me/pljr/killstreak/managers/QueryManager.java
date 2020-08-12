@@ -4,8 +4,8 @@ import me.pljr.killstreak.KillStreak;
 import me.pljr.killstreak.config.CfgSettings;
 import me.pljr.killstreak.objects.CorePlayer;
 import me.pljr.killstreak.utils.KillStreakUtil;
-import me.pljr.killstreak.managers.PlayerManager;
 import me.pljr.pljrapi.database.DataSource;
+import me.pljr.pljrapi.utils.PlayerUtil;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;
@@ -85,7 +85,7 @@ public class QueryManager {
                );
                ResultSet resultSet = preparedStatement.executeQuery();
                while (resultSet.next()){
-                   everyone.put(resultSet.getString("username"), resultSet.getInt("killstreak"));
+                   everyone.put(PlayerUtil.getName(Bukkit.getOfflinePlayer(UUID.fromString(resultSet.getString("uuid")))), resultSet.getInt("killstreak"));
                }
 
                sortedList = everyone.entrySet().stream()
@@ -98,11 +98,7 @@ public class QueryManager {
                for (Map.Entry<String, Integer> entry : sortedList.entrySet()){
                    if (loop == maxLoop) break;
                    loop++;
-                   String name = Bukkit.getOfflinePlayer(UUID.fromString(entry.getKey())).getName();
-                   if (name == null){
-                       name = "?";
-                   }
-                   leaderboard.put(name, entry.getValue());
+                   leaderboard.put(entry.getKey(), entry.getValue());
                }
                KillStreakUtil.leaderboard = leaderboard;
 
