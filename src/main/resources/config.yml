@@ -26,6 +26,7 @@ mysql:
 ################## Here, you can enable or disable functions of this plugin. # \
                  #############################################################  \
 settings:
+  bungee: false #-> Should we use bungee functions?
   leaderboard: 15 #-> How many players should be displayed in the menu? (Minimum is 3)
   autoupdate: 3600 #-> Time between automatic updates of leader board. (In seconds)
 #|--------------------------------------------------------------------------------------------------------------------|#

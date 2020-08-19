@@ -36,10 +36,10 @@ public class KillStreakUtil {
         UUID killerId = killer.getUniqueId();
         String killerName = killer.getName();
         Location killerLoc = killer.getLocation();
-        CorePlayer killerManager = PlayerManager.getCorePlayer(killerId);
+        CorePlayer killerManager = me.pljr.killstreak.KillStreak.getPlayerManager().getCorePlayer(killerId);
         UUID victimId = victim.getUniqueId();
         String victimName = victim.getName();
-        CorePlayer victimManager = PlayerManager.getCorePlayer(victimId);
+        CorePlayer victimManager = me.pljr.killstreak.KillStreak.getPlayerManager().getCorePlayer(victimId);
 
         int killerKillstreak = killerManager.getKillstreak()+1;
         KillStreak killStreak = CfgKillStreaks.killstreaks.get(killerKillstreak);
@@ -61,7 +61,7 @@ public class KillStreakUtil {
                             .replace("%killer", killerName)
                             .replace("%victim", victimName)
                             .replace("%killstreak", killerKillstreak + "");
-                    ChatUtil.broadcast(replace);
+                    ChatUtil.broadcast(replace, CfgSettings.bungee);
                 }
             }
         }
@@ -71,9 +71,7 @@ public class KillStreakUtil {
 
         victimManager.setKillstreak(0);
 
-        PlayerManager.setCorePlayer(killerId, killerManager);
-        PlayerManager.setCorePlayer(victimId, victimManager);
-        query.savePlayer(killerId);
-        query.savePlayer(victimId);
+        me.pljr.killstreak.KillStreak.getPlayerManager().setCorePlayer(killerId, killerManager);
+        me.pljr.killstreak.KillStreak.getPlayerManager().setCorePlayer(victimId, victimManager);
     }
 }

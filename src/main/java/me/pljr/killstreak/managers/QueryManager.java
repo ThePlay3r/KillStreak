@@ -41,8 +41,54 @@ public class QueryManager {
                 lastkilled = results.getString("lastkilled");
             }
             CorePlayer corePlayer = new CorePlayer(killstreak, lastkilled);
-            PlayerManager.setCorePlayer(uuid, corePlayer);
+            KillStreak.getPlayerManager().setCorePlayer(uuid, corePlayer);
             dataSource.close(connection, preparedStatement, results);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void loadPlayer(UUID uuid){
+        Bukkit.getScheduler().runTaskAsynchronously(KillStreak.getInstance(), ()->{
+            try {
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(
+                        "SELECT * FROM killstreak_players WHERE uuid=?"
+                );
+                preparedStatement.setString(1, uuid.toString());
+                ResultSet results = preparedStatement.executeQuery();
+                int killstreak = 0;
+                String lastkilled = "";
+                if (results.next()){
+                    killstreak = results.getInt("killstreak");
+                    lastkilled = results.getString("lastkilled");
+                }
+                CorePlayer corePlayer = new CorePlayer(killstreak, lastkilled);
+                KillStreak.getPlayerManager().setCorePlayer(uuid, corePlayer);
+                dataSource.close(connection, preparedStatement, results);
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void savePlayerSync(UUID uuid){
+        try {
+            CorePlayer corePlayer = KillStreak.getPlayerManager().getCorePlayer(uuid);
+
+            int killstreak = corePlayer.getKillstreak();
+            String lastkilled = corePlayer.getLastKilled();
+
+            Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "REPLACE INTO killstreak_players VALUES (?,?,?)"
+            );
+            preparedStatement.setString(1, uuid.toString());
+            preparedStatement.setInt(2, killstreak);
+            preparedStatement.setString(3, lastkilled);
+            preparedStatement.executeUpdate();
+
+            dataSource.close(connection, preparedStatement, null);
         }catch (SQLException e){
             e.printStackTrace();
         }
@@ -51,7 +97,7 @@ public class QueryManager {
     public void savePlayer(UUID uuid){
         Bukkit.getScheduler().runTaskAsynchronously(killStreak, () ->{
            try {
-               CorePlayer corePlayer = PlayerManager.getCorePlayer(uuid);
+               CorePlayer corePlayer = KillStreak.getPlayerManager().getCorePlayer(uuid);
 
                int killstreak = corePlayer.getKillstreak();
                String lastkilled = corePlayer.getLastKilled();

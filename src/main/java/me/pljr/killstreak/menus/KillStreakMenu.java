@@ -4,7 +4,7 @@ import me.pljr.killstreak.config.CfgLang;
 import me.pljr.killstreak.config.CfgMenu;
 import me.pljr.killstreak.enums.Lang;
 import me.pljr.killstreak.utils.KillStreakUtil;
-import me.pljr.pljrapi.managers.GuiManager;
+import me.pljr.pljrapi.utils.ItemStackUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,9 +23,9 @@ public class KillStreakMenu implements Listener {
     public static Inventory getMenu(Player player){
         Inventory inventory = Bukkit.createInventory(player, 3*9, CfgLang.lang.get(Lang.MENU_TITLE));
 
-        ItemStack top1 = GuiManager.createHead("Steve", "");
-        ItemStack top2  = GuiManager.createHead("Steve", "");
-        ItemStack top3  = GuiManager.createHead("Steve", "");
+        ItemStack top1 = ItemStackUtil.createHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIzZWFlZmJkNTgxMTU5Mzg0Mjc0Y2RiYmQ1NzZjZWQ4MmViNzI0MjNmMmVhODg3MTI0ZjllZDMzYTY4NzJjIn19fQ==", "", 1);
+        ItemStack top2  = ItemStackUtil.createHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIzZWFlZmJkNTgxMTU5Mzg0Mjc0Y2RiYmQ1NzZjZWQ4MmViNzI0MjNmMmVhODg3MTI0ZjllZDMzYTY4NzJjIn19fQ==", "", 1);
+        ItemStack top3  = ItemStackUtil.createHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIzZWFlZmJkNTgxMTU5Mzg0Mjc0Y2RiYmQ1NzZjZWQ4MmViNzI0MjNmMmVhODg3MTI0ZjllZDMzYTY4NzJjIn19fQ==", "", 1);
         List<String> othersList = new ArrayList<>();
 
         int loop = 0;
@@ -39,24 +39,24 @@ public class KillStreakMenu implements Listener {
                     for (String line : CfgMenu.top1Lore){
                         lore1.add(line.replace("%name", name).replace("%kills", kills+""));
                     }
-                    top1 = GuiManager.createHead(name,
-                            CfgMenu.top1Name.replace("%name", name).replace("%kills", kills+""), lore1);
+                    top1 = ItemStackUtil.createHead(name,
+                            CfgMenu.top1Name.replace("%name", name).replace("%kills", kills+""), 1, lore1);
                     continue;
                 case 2:
                     List<String> lore2 = new ArrayList<>();
                     for (String line : CfgMenu.top2Lore){
                         lore2.add(line.replace("%name", name).replace("%kills", kills+""));
                     }
-                    top2 = GuiManager.createHead(name,
-                            CfgMenu.top2Name.replace("%name", name).replace("%kills", kills+""), lore2);
+                    top2 = ItemStackUtil.createHead(name,
+                            CfgMenu.top2Name.replace("%name", name).replace("%kills", kills+""), 1, lore2);
                     continue;
                 case 3:
                     List<String> lore3 = new ArrayList<>();
                     for (String line : CfgMenu.top3Lore){
                         lore3.add(line.replace("%name", name).replace("%kills", kills+""));
                     }
-                    top3 = GuiManager.createHead(name,
-                            CfgMenu.top3Name.replace("%name", name).replace("%kills", kills+""), lore3);
+                    top3 = ItemStackUtil.createHead(name,
+                            CfgMenu.top3Name.replace("%name", name).replace("%kills", kills+""), 1, lore3);
                     continue;
             }
             othersList.add(CfgLang.lang.get(Lang.LEADERBOARD_FORMAT).replace("%pos", loop+"").replace("%name", name).replace("%kills", kills+""));

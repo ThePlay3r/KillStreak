@@ -7,10 +7,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerQuitListener implements Listener {
-    private final QueryManager query = KillStreak.getQueryManager();
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event){
-        query.savePlayer(event.getPlayer().getUniqueId());
+        KillStreak.getPlayerManager().savePlayer(event.getPlayer().getUniqueId());
     }
 }
