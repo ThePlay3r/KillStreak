@@ -8,13 +8,12 @@ import java.util.UUID;
 
 public class PlayerManager {
     private final HashMap<UUID, CorePlayer> players = new HashMap<>();
-    private final QueryManager query = KillStreak.getQueryManager();
 
     public CorePlayer getCorePlayer(UUID uuid){
         if (players.containsKey(uuid)){
             return players.get(uuid);
         }
-        query.loadPlayerSync(uuid);
+        KillStreak.getQueryManager().loadPlayerSync(uuid);
         return getCorePlayer(uuid);
     }
 
@@ -25,6 +24,6 @@ public class PlayerManager {
 
     public void savePlayer(UUID uuid){
         if (!players.containsKey(uuid)) return;
-        query.savePlayer(uuid);
+        KillStreak.getQueryManager().savePlayer(uuid);
     }
 }
