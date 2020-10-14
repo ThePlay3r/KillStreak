@@ -1,10 +1,10 @@
 name: KillStreak
 version: ${project.version}
 main: me.pljr.killstreak.KillStreak
-api-version: 1.16
+api-version: 1.13
 authors: [9hx]
 description: Simple plugin for counting kills of players.
-depends: [PLJRApi]
+depend: [PLJRApi]
 commands:
   killstreak:
     description: Main command.

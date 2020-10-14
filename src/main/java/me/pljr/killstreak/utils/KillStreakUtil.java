@@ -3,13 +3,11 @@ package me.pljr.killstreak.utils;
 import me.pljr.killstreak.config.CfgKillStreaks;
 import me.pljr.killstreak.config.CfgSettings;
 import me.pljr.killstreak.managers.QueryManager;
-import me.pljr.killstreak.managers.PlayerManager;
 import me.pljr.killstreak.objects.KillStreak;
 import me.pljr.killstreak.objects.CorePlayer;
 import me.pljr.pljrapi.managers.TitleManager;
 import me.pljr.pljrapi.objects.PLJRSound;
 import me.pljr.pljrapi.objects.PLJRTitle;
-import me.pljr.pljrapi.utils.BungeeUtil;
 import me.pljr.pljrapi.utils.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -61,7 +59,7 @@ public class KillStreakUtil {
                             .replace("%killer", killerName)
                             .replace("%victim", victimName)
                             .replace("%killstreak", killerKillstreak + "");
-                    ChatUtil.broadcast(replace, CfgSettings.bungee);
+                    ChatUtil.broadcast(replace, "", CfgSettings.bungee);
                 }
             }
         }

@@ -53,8 +53,8 @@ public final class KillStreak extends JavaPlugin {
 
     private void setupConfig(){
         saveDefaultConfig();
-        dataSource = PLJRApi.getDataSource();
         configManager = new ConfigManager(getConfig(), "§cKillStreak:", "config.yml");
+        dataSource = DataSource.getFromConfig(configManager);
         CfgKillStreaks.load();
         CfgMenu.load();
         CfgSettings.load();

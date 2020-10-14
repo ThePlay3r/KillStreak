@@ -2,7 +2,7 @@
 
 #|--------------------------------------------------------------------------------------------------------------------|#
 # Plugin: KillStreak
-# Author: https://www.mc-market.org/members/89497/ | https://www.spigotmc.org/members/radekjenejlepsi.227786/
+# Author: https://www.mc-market.org/members/89497/
 # Description: Simple plugin for counting kills of players.
 # Dependencies:
 #   -> PLJRApi
@@ -51,13 +51,11 @@ menu:
   leaderboard:
     type: "SIGN"
     name: "&eOthers"
-    amount: 1
     lore:
       - "§r" # will be replaced
   update:
     type: "REDSTONE"
     name: "&aUpdate"
-    amount: 1
     lore:
       - "&8► &fClick for leaderboard update."
 #|--------------------------------------------------------------------------------------------------------------------|#
