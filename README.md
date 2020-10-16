@@ -18,7 +18,6 @@ Spigot plugin for counting kills of players.
 ## 🎮 Commands & Permissions
 - [Overview](https://github.com/ThePlay3r/KillStreak/wiki/Commands-And-Permissions#overview)
 - [Player Commands](https://github.com/ThePlay3r/KillStreak/wiki/Commands-And-Permissions#player-commands)
-- [Admin Commands](https://github.com/ThePlay3r/KillStreak/wiki/Commands-And-Permissions#admin-commands)
 
 ## 🔎 Setup
 - [Wiki](https://github.com/ThePlay3r/KillStreak/wiki)
