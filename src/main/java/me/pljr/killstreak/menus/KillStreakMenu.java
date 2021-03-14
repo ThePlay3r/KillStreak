@@ -1,97 +1,76 @@
 package me.pljr.killstreak.menus;
 
-import me.pljr.killstreak.config.CfgLang;
-import me.pljr.killstreak.config.CfgMenu;
-import me.pljr.killstreak.enums.Lang;
-import me.pljr.killstreak.utils.KillStreakUtil;
-import me.pljr.pljrapi.utils.ItemStackUtil;
-import org.bukkit.Bukkit;
+import lombok.Getter;
+import me.pljr.killstreak.config.MenuItem;
+import me.pljr.killstreak.config.Lang;
+import me.pljr.killstreak.killstreak.KillStreakManager;
+import me.pljr.pljrapispigot.builders.GUIBuilder;
+import me.pljr.pljrapispigot.builders.ItemBuilder;
+import me.pljr.pljrapispigot.objects.GUI;
+import me.pljr.pljrapispigot.objects.GUIItem;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class KillStreakMenu implements Listener {
+@Getter
+public class KillStreakMenu {
 
-    public static Inventory getMenu(Player player){
-        Inventory inventory = Bukkit.createInventory(player, 3*9, CfgLang.lang.get(Lang.MENU_TITLE));
+    private final GUI gui;
 
-        ItemStack top1 = ItemStackUtil.createHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIzZWFlZmJkNTgxMTU5Mzg0Mjc0Y2RiYmQ1NzZjZWQ4MmViNzI0MjNmMmVhODg3MTI0ZjllZDMzYTY4NzJjIn19fQ==", "", 1);
-        ItemStack top2  = ItemStackUtil.createHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIzZWFlZmJkNTgxMTU5Mzg0Mjc0Y2RiYmQ1NzZjZWQ4MmViNzI0MjNmMmVhODg3MTI0ZjllZDMzYTY4NzJjIn19fQ==", "", 1);
-        ItemStack top3  = ItemStackUtil.createHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIzZWFlZmJkNTgxMTU5Mzg0Mjc0Y2RiYmQ1NzZjZWQ4MmViNzI0MjNmMmVhODg3MTI0ZjllZDMzYTY4NzJjIn19fQ==", "", 1);
+    public KillStreakMenu(Player player, KillStreakManager streakManager){
+        GUIBuilder builder = new GUIBuilder(Lang.MENU_TITLE.get(), 3);
+
+        ItemBuilder top1 = new ItemBuilder(MenuItem.MAIN_TOP1.get());
+        ItemBuilder top2 = new ItemBuilder(MenuItem.MAIN_TOP2.get());
+        ItemBuilder top3 = new ItemBuilder(MenuItem.MAIN_TOP3.get());
+
         List<String> othersList = new ArrayList<>();
-
         int loop = 0;
-        for (Map.Entry<String, Integer> entry : KillStreakUtil.leaderboard.entrySet()){
+        for (Map.Entry<String, Integer> entry : streakManager.getLeaderboard().entrySet()){
             loop++;
             String name = entry.getKey();
             int kills = entry.getValue();
             switch (loop){
                 case 1:
-                    List<String> lore1 = new ArrayList<>();
-                    for (String line : CfgMenu.top1Lore){
-                        lore1.add(line.replace("%name", name).replace("%kills", kills+""));
-                    }
-                    top1 = ItemStackUtil.createHead(name,
-                            CfgMenu.top1Name.replace("%name", name).replace("%kills", kills+""), 1, lore1);
+                    top1.withOwner(name);
+                    top1.replaceName("{name}", name);
+                    top1.replaceLore("{name}", name);
+                    top1.replaceName("{kills}", kills+"");
+                    top1.replaceLore("{kills}", kills+"");
                     continue;
                 case 2:
-                    List<String> lore2 = new ArrayList<>();
-                    for (String line : CfgMenu.top2Lore){
-                        lore2.add(line.replace("%name", name).replace("%kills", kills+""));
-                    }
-                    top2 = ItemStackUtil.createHead(name,
-                            CfgMenu.top2Name.replace("%name", name).replace("%kills", kills+""), 1, lore2);
+                    top2.withOwner(name);
+                    top2.replaceName("{name}", name);
+                    top2.replaceLore("{name}", name);
+                    top2.replaceName("{kills}", kills+"");
+                    top2.replaceLore("{kills}", kills+"");
                     continue;
                 case 3:
-                    List<String> lore3 = new ArrayList<>();
-                    for (String line : CfgMenu.top3Lore){
-                        lore3.add(line.replace("%name", name).replace("%kills", kills+""));
-                    }
-                    top3 = ItemStackUtil.createHead(name,
-                            CfgMenu.top3Name.replace("%name", name).replace("%kills", kills+""), 1, lore3);
+                    top3.withOwner(name);
+                    top3.replaceName("{name}", name);
+                    top3.replaceLore("{name}", name);
+                    top3.replaceName("{kills}", kills+"");
+                    top3.replaceLore("{kills}", kills+"");
                     continue;
             }
-            othersList.add(CfgLang.lang.get(Lang.LEADERBOARD_FORMAT).replace("%pos", loop+"").replace("%name", name).replace("%kills", kills+""));
+            othersList.add(Lang.LEADERBOARD_FORMAT.get().replace("{pos}", loop+"").replace("{name}", name).replace("{kills}", kills+""));
         }
-        ItemStack others = CfgMenu.leaderboard;
-        ItemMeta othersMeta = others.getItemMeta();
-        othersMeta.setLore(othersList);
-        others.setItemMeta(othersMeta);
-
-        inventory.setItem(12, top1);
-        inventory.setItem(13, top2);
-        inventory.setItem(14, top3);
+        ItemStack leaderboardItem = new ItemBuilder(MenuItem.LEADERBOARD.get()).withLore(othersList).create();
+        builder.setItem(12, top1.create());
+        builder.setItem(13, top2.create());
+        builder.setItem(14, top3.create());
         if (player.hasPermission("killstreak.update")){
-            inventory.setItem(16, CfgMenu.update);
+            builder.setItem(16, new GUIItem(MenuItem.UPDATE.get(), click -> {
+                streakManager.updateLeaderboard();
+                player.closeInventory();
+            }));
         }
-        inventory.setItem(22, others);
+        builder.setItem(22, leaderboardItem);
 
-        return inventory;
-    }
-
-    @EventHandler
-    public void onClick(InventoryClickEvent event){
-        if (event.getView().getTitle().equals(CfgLang.lang.get(Lang.MENU_TITLE))){
-            event.setCancelled(true);
-            if (event.getWhoClicked() instanceof Player){
-                Player player = (Player) event.getWhoClicked();
-                int slot = event.getSlot();
-                if (slot == 16){
-                    if (player.hasPermission("killstreak.update")){
-                        KillStreakUtil.updateLeaderboard();
-                        player.closeInventory();
-                        player.openInventory(getMenu(player));
-                    }
-                }
-            }
-        }
+        this.gui = builder.create();
     }
 }

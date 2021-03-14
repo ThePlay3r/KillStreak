@@ -1,12 +1,14 @@
 package me.pljr.killstreak.managers;
 
+import lombok.AllArgsConstructor;
 import me.pljr.killstreak.KillStreak;
-import me.pljr.killstreak.config.CfgSettings;
-import me.pljr.killstreak.objects.CorePlayer;
-import me.pljr.killstreak.utils.KillStreakUtil;
-import me.pljr.pljrapi.database.DataSource;
-import me.pljr.pljrapi.utils.PlayerUtil;
+import me.pljr.killstreak.config.Settings;
+import me.pljr.killstreak.player.KStreakPlayer;
+import me.pljr.killstreak.killstreak.KillStreakManager;
+import me.pljr.pljrapispigot.database.DataSource;
+import me.pljr.pljrapispigot.utils.PlayerUtil;
 import org.bukkit.Bukkit;
+import org.checkerframework.checker.units.qual.K;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,16 +19,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+@AllArgsConstructor
 public class QueryManager {
-    private final KillStreak killStreak = KillStreak.getInstance();
     private final DataSource dataSource;
+    private final Settings settings;
 
-    public QueryManager(DataSource dataSource){
-        this.dataSource = dataSource;
-    }
-
-    public void loadPlayerSync(UUID uuid){
+    public KStreakPlayer loadPlayer(UUID uuid){
+        KStreakPlayer player = new KStreakPlayer(uuid);
         try {
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
@@ -34,56 +33,26 @@ public class QueryManager {
             );
             preparedStatement.setString(1, uuid.toString());
             ResultSet results = preparedStatement.executeQuery();
-            int killstreak = 0;
-            String lastkilled = "";
             if (results.next()){
-                killstreak = results.getInt("killstreak");
-                lastkilled = results.getString("lastkilled");
+                player = new KStreakPlayer(uuid, results.getInt("killstreak"), results.getString("lastkilled"));
             }
-            CorePlayer corePlayer = new CorePlayer(killstreak, lastkilled);
-            KillStreak.getPlayerManager().setCorePlayer(uuid, corePlayer);
             dataSource.close(connection, preparedStatement, results);
         }catch (SQLException e){
             e.printStackTrace();
         }
+        return player;
     }
 
-    public void loadPlayer(UUID uuid){
-        Bukkit.getScheduler().runTaskAsynchronously(KillStreak.getInstance(), ()->{
-            try {
-                Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        "SELECT * FROM killstreak_players WHERE uuid=?"
-                );
-                preparedStatement.setString(1, uuid.toString());
-                ResultSet results = preparedStatement.executeQuery();
-                int killstreak = 0;
-                String lastkilled = "";
-                if (results.next()){
-                    killstreak = results.getInt("killstreak");
-                    lastkilled = results.getString("lastkilled");
-                }
-                CorePlayer corePlayer = new CorePlayer(killstreak, lastkilled);
-                KillStreak.getPlayerManager().setCorePlayer(uuid, corePlayer);
-                dataSource.close(connection, preparedStatement, results);
-            }catch (SQLException e){
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public void savePlayerSync(UUID uuid){
+    public void savePlayer(KStreakPlayer kstreakPlayer){
         try {
-            CorePlayer corePlayer = KillStreak.getPlayerManager().getCorePlayer(uuid);
-
-            int killstreak = corePlayer.getKillstreak();
-            String lastkilled = corePlayer.getLastKilled();
+            int killstreak = kstreakPlayer.getKillstreak();
+            String lastkilled = kstreakPlayer.getLastKilled();
 
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "REPLACE INTO killstreak_players VALUES (?,?,?)"
             );
-            preparedStatement.setString(1, uuid.toString());
+            preparedStatement.setString(1, kstreakPlayer.getUniqueId().toString());
             preparedStatement.setInt(2, killstreak);
             preparedStatement.setString(3, lastkilled);
             preparedStatement.executeUpdate();
@@ -94,65 +63,38 @@ public class QueryManager {
         }
     }
 
-    public void savePlayer(UUID uuid){
-        Bukkit.getScheduler().runTaskAsynchronously(killStreak, () ->{
-           try {
-               CorePlayer corePlayer = KillStreak.getPlayerManager().getCorePlayer(uuid);
+    public LinkedHashMap<String, Integer> loadLeaderboard(){
+        try {
+            LinkedHashMap<String, Integer> sortedList;
+            HashMap<String, Integer> everyone = new HashMap<>();
 
-               int killstreak = corePlayer.getKillstreak();
-               String lastkilled = corePlayer.getLastKilled();
+            Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * FROM killstreak_players"
+            );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                everyone.put(PlayerUtil.getName(Bukkit.getOfflinePlayer(UUID.fromString(resultSet.getString("uuid")))), resultSet.getInt("killstreak"));
+            }
 
-               Connection connection = dataSource.getConnection();
-               PreparedStatement preparedStatement = connection.prepareStatement(
-                       "REPLACE INTO killstreak_players VALUES (?,?,?)"
-               );
-               preparedStatement.setString(1, uuid.toString());
-               preparedStatement.setInt(2, killstreak);
-               preparedStatement.setString(3, lastkilled);
-               preparedStatement.executeUpdate();
+            sortedList = everyone.entrySet().stream()
+                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
-               dataSource.close(connection, preparedStatement, null);
-           }catch (SQLException e){
-               e.printStackTrace();
-           }
-        });
-    }
-
-    public void loadLeaderboard(){
-        Bukkit.getScheduler().runTaskAsynchronously(killStreak, () ->{
-           try {
-
-               LinkedHashMap<String, Integer> sortedList;
-               HashMap<String, Integer> everyone = new HashMap<>();
-
-               Connection connection = dataSource.getConnection();
-               PreparedStatement preparedStatement = connection.prepareStatement(
-                       "SELECT * FROM killstreak_players"
-               );
-               ResultSet resultSet = preparedStatement.executeQuery();
-               while (resultSet.next()){
-                   everyone.put(PlayerUtil.getName(Bukkit.getOfflinePlayer(UUID.fromString(resultSet.getString("uuid")))), resultSet.getInt("killstreak"));
-               }
-
-               sortedList = everyone.entrySet().stream()
-                       .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
-               LinkedHashMap<String, Integer> leaderboard = new LinkedHashMap<>();
-               int maxLoop = CfgSettings.leaderboard;
-               int loop = 1;
-               for (Map.Entry<String, Integer> entry : sortedList.entrySet()){
-                   if (loop == maxLoop) break;
-                   loop++;
-                   leaderboard.put(entry.getKey(), entry.getValue());
-               }
-               KillStreakUtil.leaderboard = leaderboard;
-
-               dataSource.close(connection, preparedStatement, resultSet);
-           }catch (SQLException e){
-               e.printStackTrace();
-           }
-        });
+            LinkedHashMap<String, Integer> leaderboard = new LinkedHashMap<>();
+            int maxLoop = settings.getLeaderboard();
+            int loop = 1;
+            for (Map.Entry<String, Integer> entry : sortedList.entrySet()){
+                if (loop == maxLoop) break;
+                loop++;
+                leaderboard.put(entry.getKey(), entry.getValue());
+            }
+            dataSource.close(connection, preparedStatement, resultSet);
+            return leaderboard;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return new LinkedHashMap<>();
     }
 
     public void setupTables() {

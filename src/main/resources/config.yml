@@ -26,48 +26,10 @@ mysql:
 ################## Here, you can enable or disable functions of this plugin. # \
                  #############################################################  \
 settings:
+  cache-players: true # Should we save player data in memory? (false = loading on each join)
   bungee: false #-> Should we use bungee functions?
   leaderboard: 15 #-> How many players should be displayed in the menu? (Minimum is 3)
   autoupdate: 3600 #-> Time between automatic updates of leader board. (In seconds)
-#|--------------------------------------------------------------------------------------------------------------------|#
-
-##############\
-# Menu Setup ###############################################\
-############## Here, you can customize plugin's main menu. # \
-             ###############################################  \
-menu:
-  top1:
-    name: "&e1. &7%name"
-    lore:
-      - "&8► §f%kills"
-  top2:
-    name: "&e2. &7%name"
-    lore:
-      - "&8► §f%kills"
-  top3:
-    name: "&e3. &7%name"
-    lore:
-      - "&8► §f%kills"
-  leaderboard:
-    type: "SIGN"
-    name: "&eOthers"
-    lore:
-      - "§r" # will be replaced
-  update:
-    type: "REDSTONE"
-    name: "&aUpdate"
-    lore:
-      - "&8► &fClick for leaderboard update."
-#|--------------------------------------------------------------------------------------------------------------------|#
-
-##############\
-# Lang Setup ################################################################\
-############## Here, you can customize messages, send by the plugin itself. # \
-             ################################################################  \
-lang:
-  MENU_TITLE: "&e&lKillStreak"
-  LEADERBOARD_FORMAT: "&8► &e%pos. &7%name &f%kills"
-  NO_CONSOLE: "&aKillStreak &8» &fThis command is for in-game use only!"
 #|--------------------------------------------------------------------------------------------------------------------|#
 
 #####################
@@ -83,7 +45,7 @@ killstreaks:
       - "Noone will ever see this! Haha!"
     title:
       title: "&c&lKillStreak"
-      subtitle: "&fYour killstreak is now &e%killstreak&f!"
+      subtitle: "&fYour killstreak is now &e{killstreak}&f!"
       in: 20
       stay: 40
       out: 20
@@ -97,11 +59,11 @@ killstreaks:
     broadcast: true
     broadcast-message:
       - "&c&lKillStreak!"
-      - "&e%killer &fkilled &e%victim&f!"
-      - "&fNew player's killstreak is &e%killstreak&f!"
+      - "&e{killer} &fkilled &e{victim}&f!"
+      - "&fNew player's killstreak is &e{killstreak}&f!"
     title:
       title: "&e&lKillStreak"
-      subtitle: "&bYou killed %victim and got KillStreak of &d5&b! &eLet's go!"
+      subtitle: "&bYou killed {victim} and got KillStreak of &d5&b! &eLet's go!"
       in: 20
       stay: 50
       out: 20
@@ -117,7 +79,7 @@ killstreaks:
       - "Noone will ever see this! Haha!"
     title:
       title: "&c&lKillStreak"
-      subtitle: "&fYour killstreak is now &e%killstreak&f!"
+      subtitle: "&fYour killstreak is now &e{killstreak}&f!"
       in: 20
       stay: 40
       out: 20

@@ -4,7 +4,7 @@ main: me.pljr.killstreak.KillStreak
 api-version: 1.13
 authors: [9hx]
 description: Simple plugin for counting kills of players.
-depend: [PLJRApi]
+depend: [PLJRApi-Spigot]
 commands:
   killstreak:
     description: Main command.
