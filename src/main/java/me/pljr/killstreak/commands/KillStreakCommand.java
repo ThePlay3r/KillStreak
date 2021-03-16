@@ -2,10 +2,10 @@ package me.pljr.killstreak.commands;
 
 import me.pljr.killstreak.killstreak.KillStreakManager;
 import me.pljr.killstreak.menus.KillStreakMenu;
-import me.pljr.pljrapispigot.utils.CommandUtil;
+import me.pljr.pljrapispigot.commands.BukkitCommand;
 import org.bukkit.entity.Player;
 
-public class KillStreakCommand extends CommandUtil {
+public class KillStreakCommand extends BukkitCommand {
 
     private final KillStreakManager streakManager;
 

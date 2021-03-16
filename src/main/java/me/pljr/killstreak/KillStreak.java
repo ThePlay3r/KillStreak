@@ -8,6 +8,7 @@ import me.pljr.killstreak.listeners.AsyncPlayerPreLoginListener;
 import me.pljr.killstreak.killstreak.KillStreakManager;
 import me.pljr.killstreak.listeners.PlayerDeathListener;
 import me.pljr.killstreak.listeners.PlayerQuitListener;
+import me.pljr.pljrapispigot.PLJRApiSpigot;
 import me.pljr.pljrapispigot.database.DataSource;
 import me.pljr.pljrapispigot.managers.ConfigManager;
 import org.bukkit.Bukkit;
@@ -18,6 +19,8 @@ import java.util.logging.Logger;
 
 public final class KillStreak extends JavaPlugin {
     public static Logger log;
+
+    private PLJRApiSpigot pljrApiSpigot;
 
     private PlayerManager playerManager;
     private KillStreakManager killStreakManager;
@@ -32,11 +35,21 @@ public final class KillStreak extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         log = this.getLogger();
+        if (!setupPLJRApi()) return;
         setupConfig();
         setupDatabase();
         setupManagers();
         loadListeners();
         setupCommands();
+    }
+
+    public boolean setupPLJRApi(){
+        if (PLJRApiSpigot.get() == null){
+            getLogger().warning("PLJRApi-Spigot is not enabled!");
+            return false;
+        }
+        pljrApiSpigot = PLJRApiSpigot.get();
+        return true;
     }
 
     private void setupCommands(){
@@ -60,7 +73,7 @@ public final class KillStreak extends JavaPlugin {
     }
 
     private void setupDatabase(){
-        DataSource dataSource = DataSource.getFromConfig(configManager);
+        DataSource dataSource = pljrApiSpigot.getDataSource(configManager);
         queryManager = new QueryManager(dataSource, settings);
         queryManager.setupTables();
         for (Player player : Bukkit.getOnlinePlayers()){
